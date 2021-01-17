@@ -1,22 +1,34 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet, Image } from 'react-native';
+import { View, Text, Button, StyleSheet, Image, TouchableOpacity, Platform, TouchableNativeFeedback } from 'react-native';
 import propTypes from 'prop-types';
 
 const ProductItem = props => {
+
+    let TouchableCmp = TouchableOpacity;
+
+    if (Platform.OS === 'android' && Platform.Version >= 21) {
+        TouchableCmp = TouchableNativeFeedback;
+    }
+
     return (
         <View style={styles.item}>
-            <View style={styles.imageContainer}>
-                <Image source={{ uri: props.imageUrl }} style={styles.image} />
-            </View>
-            <View style={styles.details}>
-                <Text style={styles.title}>{props.title}</Text>
-                <Text style={styles.price}>${props.price}</Text>
-            </View>
-            <View style={styles.buttonContainer}>
-                <Button title='View Details' onPress={props.handleViewDetail} />
-                <Button title='To Cart' onPress={props.handleToCart} />
-            </View>
+            <TouchableCmp useForeground={true} onPress={props.handleViewDetail}>
+                <View>
+                    <View style={styles.imageContainer}>
+                        <Image source={{ uri: props.imageUrl }} style={styles.image} />
+                    </View>
+                    <View style={styles.details}>
+                        <Text style={styles.title}>{props.title}</Text>
+                        <Text style={styles.price}>${props.price}</Text>
+                    </View>
+                    <View style={styles.buttonContainer}>
+                        <Button title='View Details' onPress={props.handleViewDetail} />
+                        <Button title='To Cart' onPress={props.handleToCart} />
+                    </View>
+                </View>
+            </TouchableCmp>
         </View>
+
     );
 }
 
@@ -40,7 +52,8 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
         elevation: 5,
         borderRadius: 10,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        overflow: 'hidden'
     },
     imageContainer: {
         width: '100%',

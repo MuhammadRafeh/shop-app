@@ -1,8 +1,10 @@
 //First screen when we load our app
 import React from 'react';
-import { FlatList, Text } from 'react-native';
+import { FlatList, Platform, Text } from 'react-native';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useDispatch } from 'react-redux';
 import ProductItem from '../../components/shop/ProductItem';
+import CustomHeaderButton from '../../components/UI/HeaderButton';
 import PRODUCTS from '../../data/dummy-data';
 import { addToCart } from '../../redux/actions';
 
@@ -31,8 +33,19 @@ const ProductsOverviewScreen = props => {
     )
 }
 
-ProductsOverviewScreen.navigationOptions = {
-    headerTitle: 'All Products'
+ProductsOverviewScreen.navigationOptions = (navData) => {
+    return {
+        headerTitle: 'All Products',
+        headerRight: () => <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+            <Item
+                title="Cart"
+                iconName={Platform.OS === 'android' ? 'md-cart' : 'ios-cart'}
+                onPress={() => {
+                    navData.navigation.navigate('cart')
+                }}
+            />
+        </HeaderButtons>
+    }
 }
 
 export default ProductsOverviewScreen;

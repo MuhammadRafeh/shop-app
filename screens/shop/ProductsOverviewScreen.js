@@ -1,10 +1,13 @@
 //First screen when we load our app
 import React from 'react';
 import { FlatList, Text } from 'react-native';
+import { useDispatch } from 'react-redux';
 import ProductItem from '../../components/shop/ProductItem';
 import PRODUCTS from '../../data/dummy-data';
+import { addToCart } from '../../redux/actions';
 
 const ProductsOverviewScreen = props => {
+    const dispatch = useDispatch();
     return (
         <FlatList
             data={PRODUCTS}
@@ -18,6 +21,9 @@ const ProductsOverviewScreen = props => {
                             id: item.id,
                             title: item.title
                         })
+                    }}
+                    handleToCart={() => {
+                        dispatch(addToCart(item))
                     }}
                 />
             )}

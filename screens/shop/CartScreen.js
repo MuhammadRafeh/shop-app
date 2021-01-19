@@ -1,7 +1,8 @@
 //THe screen we see when we add item to the cart
 import React from 'react';
-import { View, Text, Button, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Button, StyleSheet, ScrollView, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
+import CartItem from '../../components/shop/CartItem';
 import colors from '../../constants/colors';
 
 const CartScreen = props => {
@@ -27,10 +28,19 @@ const CartScreen = props => {
                 <Text style={styles.summaryText}>Total: <Text style={styles.amount}>${totalAmount.toFixed(2)}</Text></Text>
                 <Button color={colors.accentColor} title='Order Now' disabled={items.length === 0}/>
             </View>
-            <View style={{ paddingHorizontal: 11 }}>
-
-                <Text>CART ITEMS</Text>
-            </View>
+            <FlatList
+                data={items}
+                keyExtractor={(item, index) => item.productId}
+                renderItem={({ item }) => {
+                    //item is a object
+                    return <CartItem
+                        quantity={item.quantity}
+                        title={item.productTitle}
+                        price={item.sum}
+                        onDeleteItem={() => {}}
+                    />
+                }}
+            />
         </View>
     )
 }

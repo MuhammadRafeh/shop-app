@@ -1,28 +1,61 @@
+import React from 'react';
 import { Platform } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import colors from '../constants/colors';
 import CartScreen from '../screens/shop/CartScreen';
+import OrdersScreen from '../screens/shop/OrdersScreen';
 import ProductDetailScreen from '../screens/shop/ProductDetailScreen';
 import ProductsOverviewScreen from '../screens/shop/ProductsOverviewScreen';
+import { createDrawerNavigator } from 'react-navigation-drawer';
+import { Ionicons } from '@expo/vector-icons';
+
+const defaultNavOptions = {
+    headerStyle: {
+        backgroundColor: Platform.OS === 'android' ? colors.primaryColor : ''
+    },
+    headerTitleStyle: {
+        fontFamily: 'open-sans-bold'
+    },
+    headerBackTitleStyle: {
+        fontFamily: 'open-sans'
+    },
+    headerTintColor: Platform.OS === 'android' ? '#fff' : colors.primaryColor
+}
 
 const ProductNavigator = createStackNavigator({
     productOverview: ProductsOverviewScreen,
     productDetail: ProductDetailScreen,
     cart: CartScreen
 }, {
-    defaultNavigationOptions: {
-        headerStyle: {
-            backgroundColor: Platform.OS ===  'android' ? colors.primaryColor : ''
-        },
-        headerTitleStyle: {
-            fontFamily: 'open-sans-bold'
-        },
-        headerBackTitleStyle: {
-            fontFamily: 'open-sans'
-        },
-        headerTintColor: Platform.OS === 'android' ? '#fff' : colors.primaryColor
+    navigationOptions: {
+        drawerIcon: drawerConfig => <Ionicons
+            name={Platform.OS === 'android' ? 'md-cart' : 'ios-cart'}
+            size={23}
+            color={drawerConfig.tintColor} />
+    },
+    defaultNavigationOptions: defaultNavOptions
+});
+
+const orderNavigator = createStackNavigator({
+    orders: OrdersScreen
+}, {
+    navigationOptions: {
+        drawerIcon: drawerConfig => <Ionicons
+            name={Platform.OS === 'android' ? 'md-list' : 'ios-list'}
+            size={23}
+            color={drawerConfig.tintColor} />
+    },
+    defaultNavigationOptions: defaultNavOptions
+})
+
+const AppNavigator = createDrawerNavigator({
+    Products: ProductNavigator,
+    Orders: orderNavigator
+}, {
+    contentOptions: {
+        activeTintColor: colors.primaryColor
     }
 });
 
-export default createAppContainer(ProductNavigator);
+export default createAppContainer(AppNavigator);

@@ -1,7 +1,32 @@
 import { combineReducers } from "redux";
 import PRODUCTS from "../data/dummy-data";
 import CartItem from "../models/cart-item";
-import { addToCart, ADD_TO_CART, REMOVE_FROM_CART } from "./actions";
+import Order from "../models/order";
+import { addToCart, ADD_ORDERS, ADD_TO_CART, REMOVE_FROM_CART } from "./actions";
+
+//Orders initial State and Reducer
+const initialStateOrder = {
+    orders: []
+}
+
+const orderReducer = (state = initialStateOrder, action) => {
+    switch (action.type) {
+        case ADD_ORDERS:
+            //payload is {items:..., amount:...}
+            const newOrder = new Order(
+                new Date().toString(),
+                action.payload.items,
+                action.payload.amount,
+                new Date()
+            );
+            return {
+                // ...state,
+                orders: state.orders.concat(newOrder)
+            }
+        default:
+            return state
+    }
+}
 
 //Cart initial State and Reducer
 const initialStateCart = {
@@ -81,7 +106,8 @@ const productsReducer = (state = initialStateProduct, action) => {
 
 const rootReducer = combineReducers({
     products: productsReducer,
-    cart: cartReducer
+    cart: cartReducer,
+    orders: orderReducer
 })
 
 export default rootReducer

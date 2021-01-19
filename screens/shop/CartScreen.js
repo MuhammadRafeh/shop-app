@@ -4,7 +4,7 @@ import { View, Text, Button, StyleSheet, ScrollView, FlatList } from 'react-nati
 import { useDispatch, useSelector } from 'react-redux';
 import CartItem from '../../components/shop/CartItem';
 import colors from '../../constants/colors';
-import { removeFromCart } from '../../redux/actions';
+import { addOrders, removeFromCart } from '../../redux/actions';
 
 const CartScreen = props => {
 
@@ -20,16 +20,20 @@ const CartScreen = props => {
                 sum: state.cart.items[key].sum
             })
         }
-        return list.sort((a, b) => a.productId > b.productId ? 1: -1)
+        return list.sort((a, b) => a.productId > b.productId ? 1 : -1)
     })
 
     const dispatch = useDispatch();
-    
+
     return (
         <View style={styles.screen}>
             <View style={styles.summary}>
                 <Text style={styles.summaryText}>Total: <Text style={styles.amount}>${totalAmount.toFixed(2)}</Text></Text>
-                <Button color={colors.accentColor} title='Order Now' disabled={items.length === 0}/>
+                <Button
+                    color={colors.accentColor}
+                    title='Order Now'
+                    disabled={items.length === 0}
+                    onPress={() => {dispatch(addOrders(items, totalAmount))}} />
             </View>
             <FlatList
                 data={items}

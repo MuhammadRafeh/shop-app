@@ -39,7 +39,8 @@ const styles = StyleSheet.create({
     },
     priceTrash: {
         flexDirection: 'row',
-        padding: 10
+        padding: 10,
+        alignItems: 'center'
     },
     quantity: {
         fontFamily: 'open-sans',

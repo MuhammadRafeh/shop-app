@@ -1,9 +1,10 @@
 //THe screen we see when we add item to the cart
 import React from 'react';
 import { View, Text, Button, StyleSheet, ScrollView, FlatList } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import CartItem from '../../components/shop/CartItem';
 import colors from '../../constants/colors';
+import { removeFromCart } from '../../redux/actions';
 
 const CartScreen = props => {
 
@@ -19,9 +20,11 @@ const CartScreen = props => {
                 sum: state.cart.items[key].sum
             })
         }
-        return list
+        return list.sort((a, b) => a.productId > b.productId ? 1: -1)
     })
 
+    const dispatch = useDispatch();
+    
     return (
         <View style={styles.screen}>
             <View style={styles.summary}>
@@ -37,7 +40,9 @@ const CartScreen = props => {
                         quantity={item.quantity}
                         title={item.productTitle}
                         price={item.sum}
-                        onDeleteItem={() => {}}
+                        onDeleteItem={() => {
+                            dispatch(removeFromCart(item.productId))
+                        }}
                     />
                 }}
             />

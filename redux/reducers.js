@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 import PRODUCTS from "../data/dummy-data";
 import CartItem from "../models/cart-item";
-import { addToCart, ADD_TO_CART } from "./actions";
+import { addToCart, ADD_TO_CART, REMOVE_FROM_CART } from "./actions";
 
 //Cart initial State and Reducer
 const initialStateCart = {
@@ -36,6 +36,32 @@ const cartReducer = (state = initialStateCart, action) => {
                             actionProduct.price)
                     },
                     totalAmount: state.totalAmount + actionProduct.price
+                }
+            }
+        case REMOVE_FROM_CART:
+            //action.payload is Id
+            const selectedCartItem = state.items[action.payload]; //CartItem
+            if (selectedCartItem.quantity === 1) {
+                const newItems =  {...state.items}
+                delete newItems[action.payload]
+                return {
+                    // ...state,
+                    items: newItems,
+                    totalAmount: state.totalAmount - selectedCartItem.productPrice
+                }
+            } else {
+                return {
+                    // ...state,
+                    items: {
+                        ...state.items,
+                        [action.payload]: new CartItem(
+                            selectedCartItem.quantity - 1, 
+                            selectedCartItem.productPrice,
+                            selectedCartItem.productTitle,
+                            selectedCartItem.sum - selectedCartItem.productPrice
+                            )
+                    },
+                    totalAmount: state.totalAmount - selectedCartItem.productPrice
                 }
             }
         default:

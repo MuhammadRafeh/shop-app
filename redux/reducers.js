@@ -89,6 +89,8 @@ const cartReducer = (state = initialStateCart, action) => {
                     totalAmount: state.totalAmount - selectedCartItem.productPrice
                 }
             }
+        case ADD_ORDERS:
+            return initialStateCart
         default:
             return state;
     }

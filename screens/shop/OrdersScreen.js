@@ -13,7 +13,10 @@ const OrdersScreen = props => {
         <FlatList
             data={orders}
             renderItem={({ item }) => {
-                return <OrderItem amount={item.totalAmount} date={item.formatDate}  />
+                return <OrderItem
+                    amount={item.totalAmount}
+                    date={item.formatDate}
+                    items={item.items} />
             }}
         />
     );
@@ -21,7 +24,7 @@ const OrdersScreen = props => {
 
 OrdersScreen.navigationOptions = navData => {
     return {
-        headerTitle:'Your Orders',
+        headerTitle: 'Your Orders',
         headerLeft: () => <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
             <Item
                 title="Menu"
@@ -35,7 +38,3 @@ OrdersScreen.navigationOptions = navData => {
 }
 
 export default OrdersScreen;
-
-const styles = StyleSheet.create({
-
-});

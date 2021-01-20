@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet, Image, TouchableOpacity, Platform, TouchableNativeFeedback } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Platform, TouchableNativeFeedback } from 'react-native';
 import propTypes from 'prop-types';
 
 const ProductItem = props => {
@@ -12,7 +12,7 @@ const ProductItem = props => {
 
     return (
         <View style={styles.item}>
-            <TouchableCmp useForeground={true} onPress={props.handleViewDetail}>
+            <TouchableCmp useForeground={true} onPress={props.onSelect}>
                 <View>
                     <View style={styles.imageContainer}>
                         <Image source={{ uri: props.imageUrl }} style={styles.image} />
@@ -22,8 +22,7 @@ const ProductItem = props => {
                         <Text style={styles.price}>${props.price}</Text>
                     </View>
                     <View style={styles.buttonContainer}>
-                        <Button title='View Details' onPress={props.handleViewDetail} />
-                        <Button title='To Cart' onPress={props.handleToCart} />
+                        {props.children}
                     </View>
                 </View>
             </TouchableCmp>
@@ -36,8 +35,7 @@ ProductItem.propTypes = {
     title: propTypes.string,
     price: propTypes.any,
     imageUrl: propTypes.string,
-    handleViewDetail: propTypes.func,
-    handleToCart: propTypes.func
+    onSelect: propTypes.func
 }
 
 export default ProductItem;

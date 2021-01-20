@@ -1,6 +1,6 @@
 //First screen when we load our app
 import React from 'react';
-import { FlatList, Platform, Text } from 'react-native';
+import { FlatList, Platform, Text, Button } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useDispatch } from 'react-redux';
 import ProductItem from '../../components/shop/ProductItem';
@@ -10,6 +10,14 @@ import { addToCart } from '../../redux/actions';
 
 const ProductsOverviewScreen = props => {
     const dispatch = useDispatch();
+
+    const selectItemHandler = (id, title) => {
+        props.navigation.navigate('productDetail', {
+            id: id,
+            title: title
+        })
+    }
+
     return (
         <FlatList
             data={PRODUCTS}
@@ -18,16 +26,17 @@ const ProductsOverviewScreen = props => {
                     title={item.title}
                     price={item.price}
                     imageUrl={item.imageUrl}
-                    handleViewDetail={() => {
-                        props.navigation.navigate('productDetail', {
-                            id: item.id,
-                            title: item.title
-                        })
+                    onSelect={() => {
+                        selectItemHandler(item.id, item.title)
                     }}
-                    handleToCart={() => {
+                >
+                    <Button title='View Details' onPress={() => {
+                        selectItemHandler(item.id, item.title)
+                    }} />
+                    <Button title='To Cart' onPress={() => {
                         dispatch(addToCart(item))
-                    }}
-                />
+                    }} />
+                </ProductItem>
             )}
         />
     )
@@ -46,14 +55,14 @@ ProductsOverviewScreen.navigationOptions = (navData) => {
             />
         </HeaderButtons>,
         headerLeft: () => <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-        <Item
-            title="Menu"
-            iconName={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
-            onPress={() => {
-                navData.navigation.toggleDrawer();
-            }}
-        />
-    </HeaderButtons>
+            <Item
+                title="Menu"
+                iconName={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
+                onPress={() => {
+                    navData.navigation.toggleDrawer();
+                }}
+            />
+        </HeaderButtons>
     }
 }
 

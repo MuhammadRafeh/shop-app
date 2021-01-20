@@ -1,6 +1,6 @@
 //List of product that belong to that user
 import React from 'react';
-import { View, Text, Platform, FlatList } from 'react-native';
+import { View, Text, Platform, FlatList, Button } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useSelector } from 'react-redux';
 import ProductItem from '../../components/shop/ProductItem';
@@ -18,8 +18,13 @@ const UserProductsScreen = props => {
                     title={item.title}
                     imageUrl={item.imageUrl}
                     price={item.price}
-                    handleToCart={() => {}}
-                    handleViewDetail={() => {}} />
+                    onSelect={() => {}}
+                >
+                    <Button title='Edit' onPress={() => {
+                    }} />
+                    <Button title='Delete' onPress={() => {
+                    }} />
+                </ProductItem>
             }}
         />
     );

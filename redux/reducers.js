@@ -2,7 +2,7 @@ import { combineReducers } from "redux";
 import PRODUCTS from "../data/dummy-data";
 import CartItem from "../models/cart-item";
 import Order from "../models/order";
-import { addToCart, ADD_ORDERS, ADD_TO_CART, REMOVE_FROM_CART } from "./actions";
+import { addToCart, ADD_ORDERS, ADD_TO_CART, DELETE_PRODUCT, REMOVE_FROM_CART } from "./actions";
 
 //Orders initial State and Reducer
 const initialStateOrder = {
@@ -67,7 +67,7 @@ const cartReducer = (state = initialStateCart, action) => {
             //action.payload is Id
             const selectedCartItem = state.items[action.payload]; //CartItem
             if (selectedCartItem.quantity === 1) {
-                const newItems =  {...state.items}
+                const newItems = { ...state.items }
                 delete newItems[action.payload]
                 return {
                     // ...state,
@@ -80,17 +80,26 @@ const cartReducer = (state = initialStateCart, action) => {
                     items: {
                         ...state.items,
                         [action.payload]: new CartItem(
-                            selectedCartItem.quantity - 1, 
+                            selectedCartItem.quantity - 1,
                             selectedCartItem.productPrice,
                             selectedCartItem.productTitle,
                             selectedCartItem.sum - selectedCartItem.productPrice
-                            )
+                        )
                     },
                     totalAmount: state.totalAmount - selectedCartItem.productPrice
                 }
             }
         case ADD_ORDERS:
             return initialStateCart
+        case DELETE_PRODUCT:
+            //payload is a id
+            if (!state.items[action.payload]) return state;
+            const updatedItems = {...state.items};
+            delete updatedItems[action.payload]
+            return {
+                items: updatedItems,
+                totalAmount: state.totalAmount - state.items[action.payload].sum
+            };
         default:
             return state;
     }
@@ -103,7 +112,16 @@ const initialStateProduct = {
 }
 
 const productsReducer = (state = initialStateProduct, action) => {
-    return state
+    switch (action.type) {
+        case DELETE_PRODUCT:
+            return {
+                // ...state,
+                availableProducts: state.availableProducts.filter(product => product.id !== action.payload),
+                userProducts: state.userProducts.filter(product => product.id !== action.payload)
+            }
+        default:
+            return state;
+    }
 }
 
 const rootReducer = combineReducers({

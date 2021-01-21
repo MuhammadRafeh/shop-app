@@ -2,8 +2,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, Platform } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import CustomHeaderButton from '../../components/UI/HeaderButton';
+import { addProduct, updateProduct } from '../../redux/actions';
 
 const EditProductScreen = props => {
 
@@ -15,9 +16,15 @@ const EditProductScreen = props => {
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState(editedProduct ? editedProduct.description: '');
 
+    const dispatch = useDispatch();
+    
     const formSubmitted = useCallback(() => {
-        console.log('Submitted!')
-    }, [])
+        if (editedProduct) {
+            dispatch(updateProduct(prodId, title, description, imageUrl));
+        } else {
+            dispatch(addProduct(title, description, +price, imageUrl ));
+        }
+    }, [dispatch, title, description, price, imageUrl])
 
     useEffect(() => {
         props.navigation.setParams({submit: formSubmitted})

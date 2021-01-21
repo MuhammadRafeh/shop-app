@@ -5,6 +5,7 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useDispatch, useSelector } from 'react-redux';
 import ProductItem from '../../components/shop/ProductItem';
 import CustomHeaderButton from '../../components/UI/HeaderButton';
+import colors from '../../constants/colors';
 import { addToCart } from '../../redux/actions';
 
 const ProductsOverviewScreen = props => {
@@ -30,10 +31,10 @@ const ProductsOverviewScreen = props => {
                         selectItemHandler(item.id, item.title)
                     }}
                 >
-                    <Button title='View Details' onPress={() => {
+                    <Button color={colors.primaryColor} title='View Details' onPress={() => {
                         selectItemHandler(item.id, item.title)
                     }} />
-                    <Button title='To Cart' onPress={() => {
+                    <Button color={colors.primaryColor} title='To Cart' onPress={() => {
                         dispatch(addToCart(item))
                     }} />
                 </ProductItem>

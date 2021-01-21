@@ -2,7 +2,8 @@ import { combineReducers } from "redux";
 import PRODUCTS from "../data/dummy-data";
 import CartItem from "../models/cart-item";
 import Order from "../models/order";
-import { addToCart, ADD_ORDERS, ADD_TO_CART, DELETE_PRODUCT, REMOVE_FROM_CART } from "./actions";
+import Product from "../models/product";
+import { addToCart, ADD_ORDERS, ADD_PRODUCT, ADD_TO_CART, DELETE_PRODUCT, REMOVE_FROM_CART, UPDATE_PRODUCT } from "./actions";
 
 //Orders initial State and Reducer
 const initialStateOrder = {
@@ -94,7 +95,7 @@ const cartReducer = (state = initialStateCart, action) => {
         case DELETE_PRODUCT:
             //payload is a id
             if (!state.items[action.payload]) return state;
-            const updatedItems = {...state.items};
+            const updatedItems = { ...state.items };
             delete updatedItems[action.payload]
             return {
                 items: updatedItems,
@@ -113,6 +114,41 @@ const initialStateProduct = {
 
 const productsReducer = (state = initialStateProduct, action) => {
     switch (action.type) {
+        case ADD_PRODUCT:
+            const newProduct = new Product(
+                new Date().toString(),
+                'u1',
+                action.payload.title,
+                action.payload.imageUrl,
+                action.payload.description,
+                action.payload.price
+            )
+            return {
+                ...state,
+                availableProducts: [...state.availableProducts, newProduct],
+                userProducts: [...state.userProducts, newProduct]
+            }
+        case UPDATE_PRODUCT:
+            const userProductIndex = state.userProducts.findIndex(prod => prod.id === action.payload.id);
+            const availableProductsIndex = state.availableProducts.findIndex(prod => prod.id === action.payload.id);
+            const updatedProduct = new Product(
+                action.payload.id,
+                state.userProducts[userProductIndex].ownerId,
+                action.payload.title,
+                action.payload.imageUrl,
+                action.payload.description,
+                state.userProducts[userProductIndex].price,
+            )
+            const updatedUserProducts = [...state.userProducts]
+            updatedUserProducts[userProductIndex] = updatedProduct;
+            const updatedAvailableProducts = [...state.availableProducts];
+            updatedAvailableProducts[availableProductsIndex] = updatedProduct;
+            return {
+                // ...state,
+                availableProducts: updatedAvailableProducts,
+                userProducts: updatedUserProducts
+            }
+
         case DELETE_PRODUCT:
             return {
                 // ...state,

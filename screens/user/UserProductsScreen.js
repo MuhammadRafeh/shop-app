@@ -5,6 +5,7 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useDispatch, useSelector } from 'react-redux';
 import ProductItem from '../../components/shop/ProductItem';
 import CustomHeaderButton from '../../components/UI/HeaderButton';
+import colors from '../../constants/colors';
 import { deleteItem } from '../../redux/actions';
 
 const UserProductsScreen = props => {
@@ -26,8 +27,8 @@ const UserProductsScreen = props => {
                     price={item.price}
                     onSelect={onSelectProductHandler.bind(null, item.id)}
                 >
-                    <Button title='Edit' onPress={onSelectProductHandler.bind(null, item.id)} />
-                    <Button title='Delete' onPress={() => {
+                    <Button color={colors.primaryColor} title='Edit' onPress={onSelectProductHandler.bind(null, item.id)} />
+                    <Button color={colors.primaryColor} title='Delete' onPress={() => {
                         dispatch(deleteItem(item.id))
                     }} />
                 </ProductItem>

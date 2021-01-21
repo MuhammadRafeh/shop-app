@@ -1,6 +1,6 @@
 //List of product that belong to that user
 import React from 'react';
-import { View, Text, Platform, FlatList, Button } from 'react-native';
+import { View, Text, Platform, FlatList, Button, Alert } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useDispatch, useSelector } from 'react-redux';
 import ProductItem from '../../components/shop/ProductItem';
@@ -17,6 +17,15 @@ const UserProductsScreen = props => {
         props.navigation.navigate('editScreen', { productId: id });
     }
 
+    const deleteProduct = id => {
+        Alert.alert('Are you sure?', 'Do you really want to delete this item?', [
+            {text: 'No', style: 'default'},
+            {text: 'Yes', style: 'destructive', onPress: () => {
+                dispatch(deleteItem(id))
+            }}
+        ])
+    }
+    
     return (
         <FlatList
             data={userProduct}
@@ -28,9 +37,7 @@ const UserProductsScreen = props => {
                     onSelect={onSelectProductHandler.bind(null, item.id)}
                 >
                     <Button color={colors.primaryColor} title='Edit' onPress={onSelectProductHandler.bind(null, item.id)} />
-                    <Button color={colors.primaryColor} title='Delete' onPress={() => {
-                        dispatch(deleteItem(item.id))
-                    }} />
+                    <Button color={colors.primaryColor} title='Delete' onPress={deleteProduct.bind(null, item.id)} />
                 </ProductItem>
             }}
         />

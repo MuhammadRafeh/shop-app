@@ -1,5 +1,5 @@
 //Adding new Product or editing existing product
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, Platform } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useSelector } from 'react-redux';
@@ -15,6 +15,14 @@ const EditProductScreen = props => {
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState(editedProduct ? editedProduct.description: '');
 
+    const formSubmitted = useCallback(() => {
+        console.log('Submitted!')
+    }, [])
+
+    useEffect(() => {
+        props.navigation.setParams({submit: formSubmitted})
+    }, [formSubmitted])
+    
     return (
         <ScrollView>
             <View style={styles.form}>
@@ -50,15 +58,16 @@ const EditProductScreen = props => {
 export default EditProductScreen;
 
 EditProductScreen.navigationOptions = navData => {
+
+    const formSubmit = navData.navigation.getParam('submit')
+    
     return {
         headerTitle: navData.navigation.getParam('productId') ? 'Edit Product' : 'Add Product',
         headerRight: () => <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
             <Item
                 title="Save"
                 iconName={Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'}
-                onPress={() => {
-                    navData.navigation.navigate('editScreen')
-                }}
+                onPress={formSubmit}
             />
         </HeaderButtons>
     }

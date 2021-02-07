@@ -81,7 +81,7 @@ const EditProductScreen = props => {
             );
         }
         props.navigation.goBack();
-    }, [dispatch, state.isFormValid, prodId])
+    }, [dispatch, prodId, state])
 
     useEffect(() => {
         props.navigation.setParams({ submit: formSubmitted })

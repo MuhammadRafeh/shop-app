@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, ScrollView, TextInput, Platform, Alert } from '
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomHeaderButton from '../../components/UI/HeaderButton';
+import Input from '../../components/UI/Input';
 import { addProduct, updateProduct } from '../../redux/actions';
 
 const UPDATE_INPUT = 'UPDATE_INPUT'
@@ -104,57 +105,38 @@ const EditProductScreen = props => {
     return (
         <ScrollView>
             <View style={styles.form}>
-                <View style={styles.inputLabel}>
-                    <Text style={styles.label}>
-                        Title
-                    </Text>
-                    <TextInput
-                        value={state.userInputs.title}
-                        onChangeText={inputTextChangeHandler.bind(null, 'title')}
-                        style={styles.input}
-                        keyboardType="default"
-                        autoCapitalize='sentences'
-                        // caretHidden={true} // invisible the cursor
-                        // clearButtonMode={'while-editing'}
-                        // contextMenuHidden={true} // Prevent us to paste in textInput
-                        // dataDetectorTypes={'link'}
-                        autoCorrect
-                        // enablesReturnKeyAutomatically={true}
-                        // keyboardAppearance={'dark'}
-                        returnKeyType={'next'} //What they say on keyboard, only say
-                        onEndEditing={() => { console.log('onEndEditing') }}
-                        onSubmitEditing={() => { console.log('onSubmitEditting') }}
+                <Input
+                    label="Title"
+                    errMsg="Please enter a valid title!"
+                    keyboardType="default"
+                    autoCapitalize="sentences"
+                    autoCorrect
+                    returnKeyType={"next"}
+                />
+                <Input
+                    label="Image Url"
+                    errMsg="Please enter a valid image url!"
+                    keyboardType="default"
+                    returnKeyType={"next"}
+                />
+                {editedProduct ? null : (
+                    <Input
+                        label="Price"
+                        errMsg="Please enter a valid price!"
+                        keyboardType="decimal-pad"
+                        returnKeyType={"next"}
                     />
-                    {!state.inputValidity.title && <Text>Please enter a valid title!</Text>}
-                </View>
-                <View style={styles.inputLabel}>
-                    <Text style={styles.label}>
-                        Image URL
-                    </Text>
-                    <TextInput
-                        value={state.userInputs.imageUrl}
-                        onChangeText={inputTextChangeHandler.bind(null, 'imageUrl')}
-                        style={styles.input} />
-                </View>
-                {editedProduct ? null : <View style={styles.inputLabel}>
-                    <Text style={styles.label}>
-                        Price
-                    </Text>
-                    <TextInput
-                        value={state.userInputs.price}
-                        onChangeText={inputTextChangeHandler.bind(null, 'price')}
-                        style={styles.input}
-                        keyboardType={'decimal-pad'} />
-                </View>}
-                <View style={styles.inputLabel}>
-                    <Text style={styles.label}>
-                        Description
-                    </Text>
-                    <TextInput
-                        value={state.userInputs.description}
-                        onChangeText={inputTextChangeHandler.bind(null, 'description')}
-                        style={styles.input} />
-                </View>
+                )
+                }
+                <Input
+                    label="Description"
+                    errMsg="Please enter a valid description!"
+                    keyboardType="default"
+                    autoCapitalize="sentences"
+                    autoCorrect
+                    multiline
+                    numberOfLines={3}
+                />
             </View>
         </ScrollView>
     );
@@ -181,18 +163,5 @@ EditProductScreen.navigationOptions = navData => {
 const styles = StyleSheet.create({
     form: {
         margin: 20
-    },
-    inputLabel: {
-        width: '100%'
-    },
-    label: {
-        fontFamily: 'open-sans-bold',
-        marginVertical: 8
-    },
-    input: {
-        paddingHorizontal: 2,
-        paddingVertical: 5,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc'
     }
 });

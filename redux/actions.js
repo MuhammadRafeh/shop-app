@@ -35,25 +35,43 @@ export const deleteItem = productId => { // Take Id as a parameter
 }
 
 export const addProduct = (title, description, price, imageUrl) => {
-  return {
-    type: ADD_PRODUCT,
-    payload: {
-      title,
-      description,
-      price,
-      imageUrl
-    }
+  return async dispatch => { //dispatch will pass by redux-thunk
+    //Async Code
+    const response = await fetch('https://shop-app-4c3e7-default-rtdb.firebaseio.com/products.json', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title,
+        description,
+        price,
+        imageUrl
+      })
+    });
+    const resData = await response.json();
+    console.log(resData)
+    dispatch({
+      type: ADD_PRODUCT,
+      payload: {
+        id: resData.name,
+        title,
+        description,
+        price,
+        imageUrl
+      }
+    });
   }
 }
 
-export const updateProduct = (id, title, description, imageUrl) => {
-  return {
-    type: UPDATE_PRODUCT,
-    payload: {
-      id,
-      title,
-      description,
-      imageUrl
+  export const updateProduct = (id, title, description, imageUrl) => {
+    return {
+      type: UPDATE_PRODUCT,
+      payload: {
+        id,
+        title,
+        description,
+        imageUrl
+      }
     }
   }
-}

@@ -116,7 +116,7 @@ const productsReducer = (state = initialStateProduct, action) => {
     switch (action.type) {
         case ADD_PRODUCT:
             const newProduct = new Product(
-                new Date().toString(),
+                action.payload.id,
                 'u1',
                 action.payload.title,
                 action.payload.imageUrl,

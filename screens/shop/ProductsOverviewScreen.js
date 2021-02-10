@@ -37,6 +37,15 @@ const ProductsOverviewScreen = props => {
         loadProducts();
     }, [loadProducts])
 
+    useEffect(() => {
+        const listener = props.navigation.addListener('willFocus', loadProducts)
+
+        return () => {
+            listener.remove();
+        }
+        
+    }, [loadProducts])
+
     if (isLoading) {
         return <View style={styles.centered}>
             <ActivityIndicator size={24} color={colors.primaryColor} />

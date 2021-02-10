@@ -1,9 +1,12 @@
+import Product from "../models/product";
+
 export const ADD_TO_CART = "ADD_TO_CART";
 export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
 export const ADD_ORDERS = 'ADD_ORDERS';
 export const DELETE_PRODUCT = 'DELETE_PRODUCT';
 export const UPDATE_PRODUCT = 'UPDATE_PRODUCT';
 export const ADD_PRODUCT = 'ADD_PRODUCT';
+export const SET_PRODUCTS = 'SET_PRODUCTS';
 
 export const addToCart = (product) => {
   //Product is a object of class Product which has many properties
@@ -64,14 +67,49 @@ export const addProduct = (title, description, price, imageUrl) => {
   }
 }
 
-  export const updateProduct = (id, title, description, imageUrl) => {
-    return {
-      type: UPDATE_PRODUCT,
-      payload: {
-        id,
-        title,
-        description,
-        imageUrl
-      }
+export const updateProduct = (id, title, description, imageUrl) => {
+  return {
+    type: UPDATE_PRODUCT,
+    payload: {
+      id,
+      title,
+      description,
+      imageUrl
     }
   }
+}
+
+export const fetchProducts = () => {
+
+  return async dispatch => {
+
+    try {
+      const response = await fetch('https://shop-app-4c3e7-default-rtdb.firebaseio.com/products.json');
+
+      if (!response.ok) {
+        throw new Error('Something Went Wrong');
+      };
+      
+      const resData = await response.json();
+      console.log(resData);
+      const listOfProduct = [];
+      for (const key in resData) {
+        listOfProduct.push(
+          new Product(
+            key,
+            'u1',
+            resData[key].title,
+            resData[key].imageUrl,
+            resData[key].description,
+            resData[key].price
+          )
+        )
+      }
+      dispatch({ type: SET_PRODUCTS, payload: listOfProduct });
+    } catch (err) {
+      throw err;
+    }
+    
+  }
+
+}

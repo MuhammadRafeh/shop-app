@@ -1,14 +1,18 @@
 //First screen when we load our app
-import React from 'react';
-import { FlatList, Platform, Text, Button } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { FlatList, Platform, Text, Button, StyleSheet, ActivityIndicator, View } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useDispatch, useSelector } from 'react-redux';
 import ProductItem from '../../components/shop/ProductItem';
 import CustomHeaderButton from '../../components/UI/HeaderButton';
 import colors from '../../constants/colors';
-import { addToCart } from '../../redux/actions';
+import { addToCart, fetchProducts } from '../../redux/actions';
 
 const ProductsOverviewScreen = props => {
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [errMssg, setErrMssg] = useState();
+
     const products = useSelector(state => state.products.availableProducts);
     const dispatch = useDispatch();
 
@@ -17,6 +21,33 @@ const ProductsOverviewScreen = props => {
             id: id,
             title: title
         })
+    }
+    const loadProducts = useCallback(async () => {
+        setErrMssg(null);
+        setIsLoading(true);
+        try {
+            await dispatch(fetchProducts());
+        } catch (err) {
+            setErrMssg(err);
+        }
+        setIsLoading(false);
+    }, [dispatch, setIsLoading, setErrMssg]);
+
+    useEffect(() => {
+        loadProducts();
+    }, [loadProducts])
+
+    if (isLoading) {
+        return <View style={styles.centered}>
+            <ActivityIndicator size={24} color={colors.primaryColor} />
+        </View>
+    }
+
+    if (errMssg) {
+        return <View style={styles.centered}>
+            <Text>Some Error Occured! Maybe Start by adding Some.</Text>
+            <Button title='Refresh' onPress={loadProducts}/>
+        </View>
     }
 
     return (
@@ -66,5 +97,13 @@ ProductsOverviewScreen.navigationOptions = (navData) => {
         </HeaderButtons>
     }
 }
+
+const styles = StyleSheet.create({
+    centered: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
+})
 
 export default ProductsOverviewScreen;

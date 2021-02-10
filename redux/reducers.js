@@ -3,7 +3,7 @@ import PRODUCTS from "../data/dummy-data";
 import CartItem from "../models/cart-item";
 import Order from "../models/order";
 import Product from "../models/product";
-import { addToCart, ADD_ORDERS, ADD_PRODUCT, ADD_TO_CART, DELETE_PRODUCT, REMOVE_FROM_CART, UPDATE_PRODUCT } from "./actions";
+import { addToCart, ADD_ORDERS, ADD_PRODUCT, ADD_TO_CART, DELETE_PRODUCT, REMOVE_FROM_CART, SET_PRODUCTS, UPDATE_PRODUCT } from "./actions";
 
 //Orders initial State and Reducer
 const initialStateOrder = {
@@ -114,6 +114,12 @@ const initialStateProduct = {
 
 const productsReducer = (state = initialStateProduct, action) => {
     switch (action.type) {
+        case SET_PRODUCTS:
+            return {
+                // ...state,
+                availableProducts: action.payload,
+                userProducts: action.payload.filter(product => product.ownerId === 'u1')
+            }
         case ADD_PRODUCT:
             const newProduct = new Product(
                 action.payload.id,

@@ -74,7 +74,7 @@ export const addProduct = (title, description, price, imageUrl) => {
 
 export const updateProduct = (id, title, description, imageUrl) => {
   return async dispatch => {
-    await fetch(`https://shop-app-4c3e7-default-rtdb.firebaseio.com/products/${id}.json`, {
+    const response = await fetch(`https://shop-app-4c3e7-default-rtdb.firebaseio.com/products/${id}.json`, {
       method: 'PATCH', //update the product while PUT Replaces the item with new 1.
       headers: {
         'Content-Type': 'application/json'
@@ -85,6 +85,9 @@ export const updateProduct = (id, title, description, imageUrl) => {
         imageUrl
       })
     })
+    if (!response.ok) {
+      throw new Error('Something went wrong.');
+    }
     dispatch({
       type: UPDATE_PRODUCT,
       payload: {

@@ -31,9 +31,14 @@ export const addOrders = (cartItem, totalAmount) => { //It's list of CartItems a
 }
 
 export const deleteItem = productId => { // Take Id as a parameter
-  return {
-    type: DELETE_PRODUCT,
-    payload: productId
+  return async dispatch => {
+    await fetch(`https://shop-app-4c3e7-default-rtdb.firebaseio.com/products/${productId}.json`, {
+      method: 'DELETE'
+    });
+    dispatch({
+      type: DELETE_PRODUCT,
+      payload: productId
+    })
   }
 }
 
@@ -68,14 +73,27 @@ export const addProduct = (title, description, price, imageUrl) => {
 }
 
 export const updateProduct = (id, title, description, imageUrl) => {
-  return {
-    type: UPDATE_PRODUCT,
-    payload: {
-      id,
-      title,
-      description,
-      imageUrl
-    }
+  return async dispatch => {
+    await fetch(`https://shop-app-4c3e7-default-rtdb.firebaseio.com/products/${id}.json`, {
+      method: 'PATCH', //update the product while PUT Replaces the item with new 1.
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title,
+        description,
+        imageUrl
+      })
+    })
+    dispatch({
+      type: UPDATE_PRODUCT,
+      payload: {
+        id,
+        title,
+        description,
+        imageUrl
+      }
+    });
   }
 }
 

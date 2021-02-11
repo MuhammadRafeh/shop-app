@@ -21,12 +21,32 @@ export const removeFromCart = productId => { //It's a integer/number
 }
 
 export const addOrders = (cartItem, totalAmount) => { //It's list of CartItems as first and total Amount int as 2nd argument
-  return {
-    type: ADD_ORDERS,
-    payload: {
-      items: cartItem,
-      amount: totalAmount
+  return async dispatch => {
+    const date = new Date();
+    const response = await fetch('https://shop-app-4c3e7-default-rtdb.firebaseio.com/orders/u1.json', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        cartItem,
+        totalAmount,
+        date: date.toISOString()
+      })
+    });
+    if (!response.ok) {
+      throw new Error('Something went wrong.');
     }
+    const responseData = response.json();
+    dispatch({
+      type: ADD_ORDERS,
+      payload: {
+        id: responseData.name,
+        items: cartItem,
+        amount: totalAmount,
+        date
+      }
+    })
   }
 }
 
@@ -116,7 +136,7 @@ export const fetchProducts = () => {
       if (!response.ok) {
         throw new Error('Something Went Wrong');
       };
-      
+
       const resData = await response.json();
       console.log(resData);
       const listOfProduct = [];
@@ -136,7 +156,7 @@ export const fetchProducts = () => {
     } catch (err) {
       throw err;
     }
-    
+
   }
 
 }

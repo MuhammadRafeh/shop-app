@@ -15,10 +15,10 @@ const orderReducer = (state = initialStateOrder, action) => {
         case ADD_ORDERS:
             //payload is {items:..., amount:...}
             const newOrder = new Order(
-                new Date().toString(),
+                action.payload.id,
                 action.payload.items,
                 action.payload.amount,
-                new Date()
+                action.payload.date
             );
             return {
                 // ...state,

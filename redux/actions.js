@@ -7,6 +7,24 @@ export const DELETE_PRODUCT = 'DELETE_PRODUCT';
 export const UPDATE_PRODUCT = 'UPDATE_PRODUCT';
 export const ADD_PRODUCT = 'ADD_PRODUCT';
 export const SET_PRODUCTS = 'SET_PRODUCTS';
+export const SET_ORDERS = 'SET_ORDERS';
+
+export const fetchOrders = () => {
+  return async dispatch => {
+    const response = await fetch('https://shop-app-4c3e7-default-rtdb.firebaseio.com/orders/u1.json')
+    if (!response.ok) {
+      throw new Error('Something went wrong.');
+    }
+    const resData = await response.json();
+    console.log(resData);
+    dispatch({
+      type: SET_ORDERS,
+      payload: {
+        orders: resData
+      }
+    });
+  }
+}
 
 export const addToCart = (product) => {
   //Product is a object of class Product which has many properties

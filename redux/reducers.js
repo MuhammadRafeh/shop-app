@@ -3,7 +3,7 @@ import PRODUCTS from "../data/dummy-data";
 import CartItem from "../models/cart-item";
 import Order from "../models/order";
 import Product from "../models/product";
-import { addToCart, ADD_ORDERS, ADD_PRODUCT, ADD_TO_CART, DELETE_PRODUCT, REMOVE_FROM_CART, SET_PRODUCTS, UPDATE_PRODUCT } from "./actions";
+import { addToCart, ADD_ORDERS, ADD_PRODUCT, ADD_TO_CART, DELETE_PRODUCT, REMOVE_FROM_CART, SET_ORDERS, SET_PRODUCTS, UPDATE_PRODUCT } from "./actions";
 
 //Orders initial State and Reducer
 const initialStateOrder = {
@@ -12,6 +12,22 @@ const initialStateOrder = {
 
 const orderReducer = (state = initialStateOrder, action) => {
     switch (action.type) {
+        case SET_ORDERS:
+            // action.payload.orders
+            const listOfOrders = [];
+            for (const key in action.payload.orders) {
+                listOfOrders.push(
+                    new Order(
+                        key,
+                        action.payload.orders[key].cartItem,
+                        action.payload.orders[key].totalAmount,
+                        new Date(action.payload.orders[key].date)
+                    )
+                )
+            }
+            return {
+                orders: listOfOrders 
+            }
         case ADD_ORDERS:
             //payload is {items:..., amount:...}
             const newOrder = new Order(

@@ -32,9 +32,12 @@ export const addOrders = (cartItem, totalAmount) => { //It's list of CartItems a
 
 export const deleteItem = productId => { // Take Id as a parameter
   return async dispatch => {
-    await fetch(`https://shop-app-4c3e7-default-rtdb.firebaseio.com/products/${productId}.json`, {
+    const response = await fetch(`https://shop-app-4c3e7-default-rtdb.firebaseio.com/products/${productId}.json`, {
       method: 'DELETE'
     });
+    if (!response.ok) {
+      throw new Error('Something went wrong.');
+    }
     dispatch({
       type: DELETE_PRODUCT,
       payload: productId
@@ -57,6 +60,9 @@ export const addProduct = (title, description, price, imageUrl) => {
         imageUrl
       })
     });
+    if (!response.ok) {
+      throw new Error('Something went wrong.');
+    }
     const resData = await response.json();
     console.log(resData)
     dispatch({

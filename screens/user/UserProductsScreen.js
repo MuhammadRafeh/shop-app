@@ -1,6 +1,6 @@
 //List of product that belong to that user
-import React from 'react';
-import { View, Text, Platform, FlatList, Button, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Platform, FlatList, Button, Alert, ActivityIndicator, StyleSheet } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useDispatch, useSelector } from 'react-redux';
 import ProductItem from '../../components/shop/ProductItem';
@@ -9,6 +9,9 @@ import colors from '../../constants/colors';
 import { deleteItem } from '../../redux/actions';
 
 const UserProductsScreen = props => {
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [errMssg, setErrMssg] = useState();
 
     const userProduct = useSelector(state => state.products.userProducts);
     const dispatch = useDispatch();
@@ -19,13 +22,34 @@ const UserProductsScreen = props => {
 
     const deleteProduct = id => {
         Alert.alert('Are you sure?', 'Do you really want to delete this item?', [
-            {text: 'No', style: 'default'},
-            {text: 'Yes', style: 'destructive', onPress: () => {
-                dispatch(deleteItem(id))
-            }}
+            { text: 'No', style: 'default' },
+            {
+                text: 'Yes', style: 'errordestructive', onPress: async () => {
+                    setIsLoading(true);
+                    try {
+                        await dispatch(deleteItem(id))
+                    } catch (err) {
+                        setErrMssg(err.message)
+                    }
+                    setIsLoading(false);
+                }
+            }
         ])
     }
-    
+
+    useEffect(() => {
+        if (errMssg) {
+            Alert.alert('Operation Failed', errMssg, [{text: 'Okay'}])
+            setErrMssg(null);
+        }
+    }, [errMssg])
+
+    if (isLoading) {
+        return <View style={styles.centered}>
+            <ActivityIndicator size='large' color={colors.primaryColor} />
+        </View>
+    }
+
     return (
         <FlatList
             data={userProduct}
@@ -67,5 +91,13 @@ UserProductsScreen.navigationOptions = navData => {
         </HeaderButtons>
     }
 }
+
+const styles = StyleSheet.create({
+    centered: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
+});
 
 export default UserProductsScreen;

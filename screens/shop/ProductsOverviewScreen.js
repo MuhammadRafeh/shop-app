@@ -12,6 +12,7 @@ const ProductsOverviewScreen = props => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [errMssg, setErrMssg] = useState();
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
     const products = useSelector(state => state.products.availableProducts);
     const dispatch = useDispatch();
@@ -23,18 +24,19 @@ const ProductsOverviewScreen = props => {
         })
     }
     const loadProducts = useCallback(async () => {
+        setIsRefreshing(true);
         setErrMssg(null);
-        setIsLoading(true);
         try {
             await dispatch(fetchProducts());
         } catch (err) {
             setErrMssg(err);
         }
-        setIsLoading(false);
+        setIsRefreshing(false);
     }, [dispatch, setIsLoading, setErrMssg]);
 
     useEffect(() => {
-        loadProducts();
+        setIsLoading(true);
+        loadProducts().then(() => { setIsLoading(false) });
     }, [loadProducts])
 
     useEffect(() => {
@@ -43,7 +45,7 @@ const ProductsOverviewScreen = props => {
         return () => {
             listener.remove();
         }
-        
+
     }, [loadProducts])
 
     if (isLoading) {
@@ -55,12 +57,14 @@ const ProductsOverviewScreen = props => {
     if (errMssg) {
         return <View style={styles.centered}>
             <Text>Some Error Occured! Maybe Start by adding Some.</Text>
-            <Button title='Refresh' onPress={loadProducts}/>
+            <Button title='Refresh' onPress={loadProducts} />
         </View>
     }
 
     return (
         <FlatList
+            onRefresh={loadProducts}
+            refreshing={isRefreshing}
             data={products}
             renderItem={({ item }) => (
                 <ProductItem

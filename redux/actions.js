@@ -45,7 +45,13 @@ export const signin = (email, password) => {
     }
     const resData = await response.json();
     console.log(resData);
-    dispatch({ type: SIGNIN })
+    dispatch({
+      type: SIGNIN,
+      payload: {
+        userId: resData.localId,
+        token: resData.idToken
+      }
+    })
   }
 }
 
@@ -64,20 +70,26 @@ export const signup = (email, password) => {
           returnSecureToken: true
         })
       })
-      if (!response.ok) {
-        // throw new Error('Something went wrong!');
-        const resData = await response.json();
-        let message = 'Something went wrong!';
-        if (resData.error.message === 'EMAIL_EXISTS') {
-          message = 'Email already Exists!'
-        }
-  
-        throw new Error(message);
-  
+    if (!response.ok) {
+      // throw new Error('Something went wrong!');
+      const resData = await response.json();
+      let message = 'Something went wrong!';
+      if (resData.error.message === 'EMAIL_EXISTS') {
+        message = 'Email already Exists!'
       }
+
+      throw new Error(message);
+
+    }
     const resData = await response.json();
     console.log(resData);
-    dispatch({ type: SIGNUP })
+    dispatch({
+      type: SIGNUP,
+      payload: {
+        userId: resData.localId,
+        token: resData.idToken
+      }
+    })
   }
 }
 
@@ -111,9 +123,10 @@ export const removeFromCart = productId => { //It's a integer/number
 }
 
 export const addOrders = (cartItem, totalAmount) => { //It's list of CartItems as first and total Amount int as 2nd argument
-  return async dispatch => {
+  return async (dispatch, prevState) => {
     const date = new Date();
-    const response = await fetch('https://shop-app-4c3e7-default-rtdb.firebaseio.com/orders/u1.json', {
+    const token = prevState().auth.token;
+    const response = await fetch(`https://shop-app-4c3e7-default-rtdb.firebaseio.com/orders/u1.json?auth=${token}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -141,8 +154,9 @@ export const addOrders = (cartItem, totalAmount) => { //It's list of CartItems a
 }
 
 export const deleteItem = productId => { // Take Id as a parameter
-  return async dispatch => {
-    const response = await fetch(`https://shop-app-4c3e7-default-rtdb.firebaseio.com/products/${productId}.json`, {
+  return async (dispatch, prevState) => {
+    const token = prevState().auth.token;
+    const response = await fetch(`https://shop-app-4c3e7-default-rtdb.firebaseio.com/products/${productId}.json?auth=${token}`, {
       method: 'DELETE'
     });
     if (!response.ok) {
@@ -156,9 +170,10 @@ export const deleteItem = productId => { // Take Id as a parameter
 }
 
 export const addProduct = (title, description, price, imageUrl) => {
-  return async dispatch => { //dispatch will pass by redux-thunk
+  return async (dispatch, prevState) => { //dispatch will pass by redux-thunk
     //Async Code
-    const response = await fetch('https://shop-app-4c3e7-default-rtdb.firebaseio.com/products.json', {
+    const token = prevState().auth.token;
+    const response = await fetch(`https://shop-app-4c3e7-default-rtdb.firebaseio.com/products.json?auth=${token}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -189,8 +204,9 @@ export const addProduct = (title, description, price, imageUrl) => {
 }
 
 export const updateProduct = (id, title, description, imageUrl) => {
-  return async dispatch => {
-    const response = await fetch(`https://shop-app-4c3e7-default-rtdb.firebaseio.com/products/${id}.json`, {
+  return async (dispatch, prevState) => {
+    const token = prevState().auth.token;
+    const response = await fetch(`https://shop-app-4c3e7-default-rtdb.firebaseio.com/products/${id}.json?auth=${token}`, {
       method: 'PATCH', //update the product while PUT Replaces the item with new 1.
       headers: {
         'Content-Type': 'application/json'

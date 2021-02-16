@@ -49,6 +49,12 @@ const OrdersScreen = props => {
             <ActivityIndicator size={'large'} color={colors.primaryColor} />
         </View>
     }
+
+    if (orders.length === 0) {
+        return <View style={styles.centered}>
+            <Text>No order found! may be start by ordering some.</Text>
+        </View>
+    }
     
     return (
         <FlatList

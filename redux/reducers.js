@@ -147,8 +147,8 @@ const cartReducer = (state = initialStateCart, action) => {
 
 //Product Initial State and Reducer
 const initialStateProduct = {
-    availableProducts: PRODUCTS,
-    userProducts: PRODUCTS.filter(product => product.ownerId === 'u1')
+    availableProducts: [],
+    userProducts: []
 }
 
 const productsReducer = (state = initialStateProduct, action) => {
@@ -156,13 +156,13 @@ const productsReducer = (state = initialStateProduct, action) => {
         case SET_PRODUCTS:
             return {
                 // ...state,
-                availableProducts: action.payload,
-                userProducts: action.payload.filter(product => product.ownerId === 'u1')
+                availableProducts: action.payload.listOfProduct,
+                userProducts: action.payload.userProduct
             }
         case ADD_PRODUCT:
             const newProduct = new Product(
                 action.payload.id,
-                'u1',
+                action.payload.ownerId,
                 action.payload.title,
                 action.payload.imageUrl,
                 action.payload.description,

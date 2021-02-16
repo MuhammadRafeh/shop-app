@@ -50,6 +50,12 @@ const UserProductsScreen = props => {
         </View>
     }
 
+    if (userProduct.length === 0) {
+        return <View style={styles.centered}>
+            <Text>No product found! may be start by creating some.</Text>
+        </View>
+    }
+
     return (
         <FlatList
             data={userProduct}

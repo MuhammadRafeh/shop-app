@@ -1,3 +1,4 @@
+import { useState } from "react/cjs/react.development";
 import Product from "../models/product";
 
 export const ADD_TO_CART = "ADD_TO_CART";
@@ -94,8 +95,9 @@ export const signup = (email, password) => {
 }
 
 export const fetchOrders = () => {
-  return async dispatch => {
-    const response = await fetch('https://shop-app-4c3e7-default-rtdb.firebaseio.com/orders/u1.json')
+  return async (dispatch, getState) => {
+    const userId = getState().auth.userId;
+    const response = await fetch(`https://shop-app-4c3e7-default-rtdb.firebaseio.com/orders/${userId}.json`)
     if (!response.ok) {
       throw new Error('Something went wrong.');
     }
@@ -125,8 +127,10 @@ export const removeFromCart = productId => { //It's a integer/number
 export const addOrders = (cartItem, totalAmount) => { //It's list of CartItems as first and total Amount int as 2nd argument
   return async (dispatch, prevState) => {
     const date = new Date();
-    const token = prevState().auth.token;
-    const response = await fetch(`https://shop-app-4c3e7-default-rtdb.firebaseio.com/orders/u1.json?auth=${token}`, {
+    const state = prevState();
+    const token = state.auth.token;
+    const userId = state.auth.userId;
+    const response = await fetch(`https://shop-app-4c3e7-default-rtdb.firebaseio.com/orders/${userId}.json?auth=${token}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -172,7 +176,9 @@ export const deleteItem = productId => { // Take Id as a parameter
 export const addProduct = (title, description, price, imageUrl) => {
   return async (dispatch, prevState) => { //dispatch will pass by redux-thunk
     //Async Code
-    const token = prevState().auth.token;
+    const state = prevState()
+    const token = state.auth.token;
+    const userId = state.auth.userId;
     const response = await fetch(`https://shop-app-4c3e7-default-rtdb.firebaseio.com/products.json?auth=${token}`, {
       method: 'POST',
       headers: {
@@ -182,7 +188,8 @@ export const addProduct = (title, description, price, imageUrl) => {
         title,
         description,
         price,
-        imageUrl
+        imageUrl,
+        ownerId: userId
       })
     });
     if (!response.ok) {
@@ -197,7 +204,8 @@ export const addProduct = (title, description, price, imageUrl) => {
         title,
         description,
         price,
-        imageUrl
+        imageUrl,
+        ownerId: userId
       }
     });
   }
@@ -234,8 +242,8 @@ export const updateProduct = (id, title, description, imageUrl) => {
 
 export const fetchProducts = () => {
 
-  return async dispatch => {
-
+  return async (dispatch, getStore) => {
+    const userId = getStore().auth.userId;
     try {
       const response = await fetch('https://shop-app-4c3e7-default-rtdb.firebaseio.com/products.json');
 
@@ -250,7 +258,8 @@ export const fetchProducts = () => {
         listOfProduct.push(
           new Product(
             key,
-            'u1',
+            // 'u1',
+            resData[key].ownerId,
             resData[key].title,
             resData[key].imageUrl,
             resData[key].description,
@@ -258,7 +267,13 @@ export const fetchProducts = () => {
           )
         )
       }
-      dispatch({ type: SET_PRODUCTS, payload: listOfProduct });
+      dispatch({ 
+        type: SET_PRODUCTS, 
+        payload: {
+          listOfProduct,
+          userProduct: listOfProduct.filter(product => product.ownerId === userId)
+        } 
+      });
     } catch (err) {
       throw err;
     }

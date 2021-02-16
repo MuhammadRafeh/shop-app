@@ -4,7 +4,9 @@ import {
   View,
   KeyboardAvoidingView,
   StyleSheet,
-  Button
+  Button,
+  ActivityIndicator,
+  Alert
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useDispatch } from 'react-redux';
@@ -13,6 +15,8 @@ import Input from '../../components/UI/Input';
 import Colors from '../../constants/colors';
 import Card from '../../components/UI/Card';
 import * as authActions from '../../redux/actions';
+import colors from '../../constants/colors';
+import { useEffect } from 'react/cjs/react.development';
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 
@@ -41,7 +45,9 @@ const formReducer = (state, action) => {
 
 const AuthScreen = props => {
 
+  const [isLoading, setIsLoading] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
+  const [errMssg, setErrMssg] = useState();
 
   const dispatch = useDispatch();
 
@@ -57,22 +63,27 @@ const AuthScreen = props => {
     formIsValid: false
   });
 
-  const authHandler = () => {
+  const authHandler = async () => {
+    let action;
     if (isSignup) {
-      dispatch(
-        authActions.signup(
+        action = authActions.signup(
           formState.inputValues.email,
           formState.inputValues.password
         )
-      );
     } else {
-      dispatch(
-        authActions.signin(
+        action = authActions.signin(
           formState.inputValues.email,
           formState.inputValues.password
         )
-      );
     }
+    try {
+      setErrMssg(null);
+      setIsLoading(true);
+      await dispatch(action);
+    } catch (err) {
+      setErrMssg(err.message);
+    }
+    setIsLoading(false)
   };
 
   const inputChangeHandler = useCallback(
@@ -86,6 +97,13 @@ const AuthScreen = props => {
     },
     [dispatchFormState]
   );
+
+  useEffect(() => {
+    if (errMssg) {
+      Alert.alert('Operation Failed!', errMssg, [{text: 'Okay'}]);
+      setErrMssg(null);
+    }
+  }, [errMssg])
 
   return (
     // <KeyboardAvoidingView
@@ -120,11 +138,11 @@ const AuthScreen = props => {
             initialValue=""
           />
           <View style={styles.buttonContainer}>
-            <Button
+            {!isLoading ? <Button
               title={isSignup ? 'Sign Up' : 'Login'}
               color={Colors.primary}
               onPress={authHandler}
-            />
+            /> : <ActivityIndicator size={'small'} color={colors.primaryColor} />}
           </View>
           <View style={styles.buttonContainer}>
             <Button

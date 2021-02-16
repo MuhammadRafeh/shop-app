@@ -1,4 +1,4 @@
-import React, { useReducer, useCallback } from 'react';
+import React, { useReducer, useCallback, useState } from 'react';
 import {
   ScrollView,
   View,
@@ -40,6 +40,9 @@ const formReducer = (state, action) => {
 };
 
 const AuthScreen = props => {
+
+  const [isSignup, setIsSignup] = useState(false);
+
   const dispatch = useDispatch();
 
   const [formState, dispatchFormState] = useReducer(formReducer, {
@@ -54,13 +57,22 @@ const AuthScreen = props => {
     formIsValid: false
   });
 
-  const signupHandler = () => {
-    dispatch(
-      authActions.signup(
-        formState.inputValues.email,
-        formState.inputValues.password
-      )
-    );
+  const authHandler = () => {
+    if (isSignup) {
+      dispatch(
+        authActions.signup(
+          formState.inputValues.email,
+          formState.inputValues.password
+        )
+      );
+    } else {
+      dispatch(
+        authActions.signin(
+          formState.inputValues.email,
+          formState.inputValues.password
+        )
+      );
+    }
   };
 
   const inputChangeHandler = useCallback(
@@ -81,49 +93,51 @@ const AuthScreen = props => {
     //   keyboardVerticalOffset={50}
     //   style={styles.screen}
     // >
-      <LinearGradient colors={['#ffedff', '#ffe3ff']} style={styles.gradient}>
-        <Card style={styles.authContainer}>
-          <ScrollView>
-            <Input
-              id="email"
-              label="E-Mail"
-              keyboardType="email-address"
-              required
-              email
-              autoCapitalize="none"
-              errorText="Please enter a valid email address."
-              onInputChange={inputChangeHandler}
-              initialValue=""
+    <LinearGradient colors={['#ffedff', '#ffe3ff']} style={styles.gradient}>
+      <Card style={styles.authContainer}>
+        <ScrollView>
+          <Input
+            id="email"
+            label="E-Mail"
+            keyboardType="email-address"
+            required
+            email
+            autoCapitalize="none"
+            errorText="Please enter a valid email address."
+            onInputChange={inputChangeHandler}
+            initialValue=""
+          />
+          <Input
+            id="password"
+            label="Password"
+            keyboardType="default"
+            secureTextEntry
+            required
+            minLength={5}
+            autoCapitalize="none"
+            errorText="Please enter a valid password."
+            onInputChange={inputChangeHandler}
+            initialValue=""
+          />
+          <View style={styles.buttonContainer}>
+            <Button
+              title={isSignup ? 'Sign Up' : 'Login'}
+              color={Colors.primary}
+              onPress={authHandler}
             />
-            <Input
-              id="password"
-              label="Password"
-              keyboardType="default"
-              secureTextEntry
-              required
-              minLength={5}
-              autoCapitalize="none"
-              errorText="Please enter a valid password."
-              onInputChange={inputChangeHandler}
-              initialValue=""
+          </View>
+          <View style={styles.buttonContainer}>
+            <Button
+              title={`Switch to ${isSignup ? 'login' : 'sign up'}`}
+              color={Colors.accent}
+              onPress={() => {
+                setIsSignup(prevState => !prevState)
+              }}
             />
-            <View style={styles.buttonContainer}>
-              <Button
-                title="Login"
-                color={Colors.primary}
-                onPress={signupHandler}
-              />
-            </View>
-            <View style={styles.buttonContainer}>
-              <Button
-                title="Switch to Sign Up"
-                color={Colors.accent}
-                onPress={() => {}}
-              />
-            </View>
-          </ScrollView>
-        </Card>
-      </LinearGradient>
+          </View>
+        </ScrollView>
+      </Card>
+    </LinearGradient>
     // </KeyboardAvoidingView>
   );
 };

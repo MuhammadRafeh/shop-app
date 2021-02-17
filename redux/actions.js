@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState } from "react/cjs/react.development";
 import Product from "../models/product";
 
@@ -9,8 +10,28 @@ export const UPDATE_PRODUCT = 'UPDATE_PRODUCT';
 export const ADD_PRODUCT = 'ADD_PRODUCT';
 export const SET_PRODUCTS = 'SET_PRODUCTS';
 export const SET_ORDERS = 'SET_ORDERS';
-export const SIGNUP = 'SIGNUP';
-export const SIGNIN = 'SIGNIN';
+// export const SIGNUP = 'SIGNUP';
+// export const SIGNIN = 'SIGNIN';
+export const AUTHENTICATE = 'AUTHENTICATE';
+
+export const authenticate = (token, userId) => {
+  return {
+    type: AUTHENTICATE,
+    payload: {
+      userId,
+      token
+    }
+  }
+}
+
+const setAsyncStorageUserData = (token, userId, expiresIn) => {
+  const expiryDate = new Date(new Date().getTime() + parseInt(expiresIn) * 1000).toISOString();
+  AsyncStorage.setItem('userData', JSON.stringify({
+    token,
+    userId,
+    expiryDate
+  }))
+}
 
 export const signin = (email, password) => {
   return async dispatch => {
@@ -46,13 +67,8 @@ export const signin = (email, password) => {
     }
     const resData = await response.json();
     console.log(resData);
-    dispatch({
-      type: SIGNIN,
-      payload: {
-        userId: resData.localId,
-        token: resData.idToken
-      }
-    })
+    dispatch(authenticate(resData.idToken, resData.localId))
+    setAsyncStorageUserData(resData.idToken, resData.localId, resData.expiresIn);
   }
 }
 
@@ -84,13 +100,8 @@ export const signup = (email, password) => {
     }
     const resData = await response.json();
     console.log(resData);
-    dispatch({
-      type: SIGNUP,
-      payload: {
-        userId: resData.localId,
-        token: resData.idToken
-      }
-    })
+    dispatch(authenticate(resData.idToken, resData.localId))
+    setAsyncStorageUserData(resData.idToken, resData.localId, resData.expiresIn);
   }
 }
 
@@ -267,12 +278,12 @@ export const fetchProducts = () => {
           )
         )
       }
-      dispatch({ 
-        type: SET_PRODUCTS, 
+      dispatch({
+        type: SET_PRODUCTS,
         payload: {
           listOfProduct,
           userProduct: listOfProduct.filter(product => product.ownerId === userId)
-        } 
+        }
       });
     } catch (err) {
       throw err;

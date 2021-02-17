@@ -3,7 +3,7 @@ import PRODUCTS from "../data/dummy-data";
 import CartItem from "../models/cart-item";
 import Order from "../models/order";
 import Product from "../models/product";
-import { addToCart, ADD_ORDERS, ADD_PRODUCT, ADD_TO_CART, DELETE_PRODUCT, REMOVE_FROM_CART, SET_ORDERS, SET_PRODUCTS, SIGNIN, SIGNUP, UPDATE_PRODUCT } from "./actions";
+import { addToCart, ADD_ORDERS, ADD_PRODUCT, ADD_TO_CART, AUTHENTICATE, DELETE_PRODUCT, REMOVE_FROM_CART, SET_ORDERS, SET_PRODUCTS, UPDATE_PRODUCT } from "./actions";
 
 //auth initial State and Reducer
 const initialStateAuth = {
@@ -13,12 +13,7 @@ const initialStateAuth = {
 
 const authReducer = (state = initialStateAuth, action) => {
     switch (action.type) {
-        case SIGNIN:
-            return {
-                token: action.payload.token,
-                userId: action.payload.userId
-            }
-        case SIGNUP:
+        case AUTHENTICATE:
             return {
                 token: action.payload.token,
                 userId: action.payload.userId

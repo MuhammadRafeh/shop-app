@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform } from 'react-native';
+import { View, Button, Platform, SafeAreaView } from 'react-native';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import colors from '../constants/colors';
@@ -7,12 +7,15 @@ import CartScreen from '../screens/shop/CartScreen';
 import OrdersScreen from '../screens/shop/OrdersScreen';
 import ProductDetailScreen from '../screens/shop/ProductDetailScreen';
 import ProductsOverviewScreen from '../screens/shop/ProductsOverviewScreen';
-import { createDrawerNavigator } from 'react-navigation-drawer';
+import { createDrawerNavigator, DrawerItems } from 'react-navigation-drawer';
 import { Ionicons } from '@expo/vector-icons';
 import UserProductsScreen from '../screens/user/UserProductsScreen';
 import EditProductScreen from '../screens/user/EditProductScreen';
 import AuthScreen from '../screens/user/AuthScreen';
 import StartupScreen from '../screens/StartupScreen';
+import { useDispatch } from 'react-redux';
+import { logout } from '../redux/actions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const defaultNavOptions = {
     headerStyle: {
@@ -73,6 +76,19 @@ const AppNavigator = createDrawerNavigator({
 }, {
     contentOptions: {
         activeTintColor: colors.primaryColor
+    },
+    contentComponent: props => {
+        const dispatch = useDispatch();
+        return <SafeAreaView style={{flex: 1}}>
+            <View style={{ flex: 1, paddingTop: 20 }}>
+                <DrawerItems {...props} />
+                <Button title={'Logout'} onPress={() => {
+                    dispatch(logout());
+                    props.navigation.navigate('Auth');
+                    AsyncStorage.removeItem('userData')
+                }} />
+            </View>
+        </SafeAreaView >
     }
 });
 

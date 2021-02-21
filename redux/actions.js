@@ -13,6 +13,13 @@ export const SET_ORDERS = 'SET_ORDERS';
 // export const SIGNUP = 'SIGNUP';
 // export const SIGNIN = 'SIGNIN';
 export const AUTHENTICATE = 'AUTHENTICATE';
+export const LOGOUT = 'LOGOUT';
+
+export const logout = () => {
+  return {
+    type: LOGOUT
+  }
+}
 
 export const authenticate = (token, userId) => {
   return {

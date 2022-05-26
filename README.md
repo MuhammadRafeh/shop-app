@@ -1,5 +1,5 @@
 # Shop App
-React Native based online shop app where user can buy products and also can open and manage his/her own store.
+A React Native based online shop app where user can buy products and also can open and manage his/her own store.
 
 ## Preview
 <p float="left">
